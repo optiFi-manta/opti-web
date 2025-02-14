@@ -1,0 +1,4 @@
+export const ADDRESS_OPTIFINANCE = "0x0b561A287588675AccE2f190FFa2AdCb30145e01";
+export const ADDRESS_AVS = "0x0"
+export const CHAIN_ID = 3441006;
+export const DECIMALS_MOCK_TOKEN = 6;
