@@ -4,18 +4,18 @@ import { useState } from "react";
 import apiAgent from "@/lib/api-agent";
 import { ADDRESS_AVS } from "@/lib/constants";
 import { AVSAbi } from "@/lib/abis/AVSAbi";
-import { walletClient } from "@/lib/client";
 import { useAccount } from "wagmi";
-import { baseSepolia } from "viem/chains";
-import { encodeFunctionData } from "viem";
 import { useStaking } from "@/hooks/query/useStaking";
 import useGenerateContent from "@/hooks/query/api/useGeneratedContent";
+import { writeContract } from "wagmi/actions";
+import { useWagmiConfig } from "@/lib/wagmi";
 
 type Status = "idle" | "loading" | "success" | "error";
 
 export const useGenerateAI = () => {
   const { address } = useAccount()
   const { sData } = useStaking();
+  const wagmiConfig = useWagmiConfig();
 
   const { risk, setRisk, protocolId, setProtocolId } = useGenerateContent();
 
@@ -95,17 +95,18 @@ export const useGenerateAI = () => {
 
           if (response.response[0]?.id_project) {
             try {
-              await walletClient.switchChain({ id: baseSepolia.id });
-
-              const txHash = await walletClient.sendTransaction({
-                to: ADDRESS_AVS,
-                data: encodeFunctionData({
-                  abi: AVSAbi,
-                  functionName: "taskAgent",
-                  args: [findStaking?.idProtocol]
-                }),
-                account: address as HexAddress,
-                chain: baseSepolia
+              const txHash = await writeContract(wagmiConfig, {
+                // to: ADDRESS_AVS,
+                // data: encodeFunctionData({
+                //   abi: AVSAbi,
+                //   functionName: "taskAgent",
+                //   args: [findStaking?.idProtocol]
+                // }),
+                // account: address as HexAddress,
+                address: ADDRESS_AVS,
+                abi: AVSAbi,
+                functionName: "taskAgent",
+                args: [findStaking?.idProtocol],
               });
 
               if (txHash) {

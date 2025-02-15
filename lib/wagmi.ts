@@ -1,8 +1,8 @@
-'use client';
 import { connectorsForWallets } from '@rainbow-me/rainbowkit';
 import {
   metaMaskWallet,
   okxWallet,
+  rabbyWallet,
   rainbowWallet,
 } from '@rainbow-me/rainbowkit/wallets';
 import { useMemo } from 'react';
@@ -22,7 +22,7 @@ export function useWagmiConfig() {
       [
         {
           groupName: 'Recommended Wallet',
-          wallets: [okxWallet],
+          wallets: [okxWallet, rabbyWallet, metaMaskWallet],
         },
         {
           groupName: 'Other Wallets',
@@ -41,7 +41,7 @@ export function useWagmiConfig() {
       connectors,
       ssr: true,
       transports: {
-        [mantaSepoliaTestnet.id]: http("https://pacific-rpc.sepolia-testnet.manta.network/http")
+        [mantaSepoliaTestnet.id]: http("https://pacific-rpc.sepolia-testnet.manta.network/http"),
       },
     });
 
