@@ -1,2 +1,2 @@
-# opti-web
-For Hackathon Safe Agents
+# optiFi Web
+For Indonesia Hacker House - Manta - Blockdev.id
