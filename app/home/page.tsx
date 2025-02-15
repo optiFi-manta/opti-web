@@ -1,3 +1,5 @@
+"use client";
+
 import { subtitle, title } from "@/components/primitives";
 import Link from "next/link";
 
