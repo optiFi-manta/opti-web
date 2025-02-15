@@ -1,6 +1,6 @@
 import { MockStakingABI } from "@/lib/abis/MockStakingABI";
 import { denormalize } from "@/lib/bignumber";
-import { useWagmiConfig } from "@/lib/wagmi";
+import { config } from "@/lib/wagmi";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useAccount } from "wagmi";
@@ -13,7 +13,6 @@ type Status = "idle" | "loading" | "success" | "error";
 
 export const useBid = () => {
   const { address: userAddress } = useAccount();
-  const wagmiConfig = useWagmiConfig();
 
   const [steps, setSteps] = useState<
     Array<{
@@ -61,7 +60,7 @@ export const useBid = () => {
           })
         );
 
-        const txHash = await writeContract(wagmiConfig, {
+        const txHash = await writeContract(config, {
           address: addressStaking,
           abi: MockStakingABI,
           functionName: "stake",
@@ -73,7 +72,7 @@ export const useBid = () => {
 
         setTxHash(txHash);
 
-        const result = await waitForTransactionReceipt(wagmiConfig, {
+        const result = await waitForTransactionReceipt(config, {
           hash: txHash,
         });
 

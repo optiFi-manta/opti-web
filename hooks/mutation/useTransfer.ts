@@ -1,7 +1,7 @@
 import { MockTokenABI } from "@/lib/abis/MockTokenABI";
 import { denormalize, valueToBigInt } from "@/lib/bignumber";
 import { DECIMALS_MOCK_TOKEN } from "@/lib/constants";
-import { useWagmiConfig } from "@/lib/wagmi";
+import { config } from "@/lib/wagmi";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { erc20Abi } from "viem";
@@ -15,7 +15,6 @@ type Status = "idle" | "loading" | "success" | "error";
 
 export const useTransfer = () => {
   const { address: userAddress } = useAccount();
-  const wagmiConfig = useWagmiConfig();
 
   const [steps, setSteps] = useState<
     Array<{
@@ -61,7 +60,7 @@ export const useTransfer = () => {
           })
         );
 
-        const approveHash = await writeContract(wagmiConfig, {
+        const approveHash = await writeContract(config, {
           address: addressToken,
           abi: erc20Abi,
           functionName: "approve",
@@ -71,7 +70,7 @@ export const useTransfer = () => {
           ],
         });
 
-        await waitForTransactionReceipt(wagmiConfig, {
+        await waitForTransactionReceipt(config, {
           hash: approveHash,
         });
 
@@ -84,7 +83,7 @@ export const useTransfer = () => {
           })
         );
 
-        const txHash = await writeContract(wagmiConfig, {
+        const txHash = await writeContract(config, {
           address: addressToken,
           abi: MockTokenABI,
           functionName: "transfer",
@@ -96,7 +95,7 @@ export const useTransfer = () => {
 
         setTxHash(txHash);
 
-        const result = await waitForTransactionReceipt(wagmiConfig, {
+        const result = await waitForTransactionReceipt(config, {
           hash: txHash,
         });
 

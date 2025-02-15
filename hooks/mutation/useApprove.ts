@@ -1,5 +1,5 @@
 import { denormalize, valueToBigInt } from "@/lib/bignumber";
-import { useWagmiConfig } from "@/lib/wagmi";
+import { config } from "@/lib/wagmi";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { erc20Abi } from "viem";
@@ -13,8 +13,6 @@ type Status = "idle" | "loading" | "success" | "error";
 
 export const useApprove = () => {
   const { address: userAddress } = useAccount();
-
-  const wagmiConfig = useWagmiConfig();
 
   const [steps, setSteps] = useState<
     Array<{
@@ -62,7 +60,7 @@ export const useApprove = () => {
           })
         );
 
-        const txHash = await writeContract(wagmiConfig, {
+        const txHash = await writeContract(config, {
           address: addressToken,
           abi: erc20Abi,
           functionName: "approve",
@@ -74,7 +72,7 @@ export const useApprove = () => {
 
         setTxHash(txHash);
 
-        const result = await waitForTransactionReceipt(wagmiConfig, {
+        const result = await waitForTransactionReceipt(config, {
           hash: txHash,
         });
 

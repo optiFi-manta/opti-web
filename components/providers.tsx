@@ -11,9 +11,11 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { WagmiProvider } from 'wagmi';
-import { useWagmiConfig } from "@/lib/wagmi";
+import { config } from "@/lib/wagmi";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { mantaSepoliaTestnet } from "viem/chains";
+
+export const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -30,15 +32,19 @@ declare module "@react-types/shared" {
 
 const queryClient = new QueryClient();
 
+if (!projectId) throw new Error('Project ID is not defined');
+
 export default function Providers({ children, themeProps }: ProvidersProps) {
   const router = useRouter();
-  const wagmiConfig = useWagmiConfig();
 
   return (
     <HeroUIProvider navigate={router.push}>
-      <WagmiProvider config={wagmiConfig}>
+      <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
-          <RainbowKitProvider modalSize="compact" initialChain={mantaSepoliaTestnet}>
+          <RainbowKitProvider
+            modalSize='compact'
+            initialChain={mantaSepoliaTestnet}
+          >
             <NextThemesProvider {...themeProps}>
               {children}
             </NextThemesProvider>

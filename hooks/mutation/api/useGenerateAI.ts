@@ -8,14 +8,13 @@ import { useAccount } from "wagmi";
 import { useStaking } from "@/hooks/query/useStaking";
 import useGenerateContent from "@/hooks/query/api/useGeneratedContent";
 import { writeContract } from "wagmi/actions";
-import { useWagmiConfig } from "@/lib/wagmi";
+import { config } from "@/lib/wagmi";
 
 type Status = "idle" | "loading" | "success" | "error";
 
 export const useGenerateAI = () => {
   const { address } = useAccount()
   const { sData } = useStaking();
-  const wagmiConfig = useWagmiConfig();
 
   const { risk, setRisk, protocolId, setProtocolId } = useGenerateContent();
 
@@ -95,7 +94,7 @@ export const useGenerateAI = () => {
 
           if (response.response[0]?.id_project) {
             try {
-              const txHash = await writeContract(wagmiConfig, {
+              const txHash = await writeContract(config, {
                 // to: ADDRESS_AVS,
                 // data: encodeFunctionData({
                 //   abi: AVSAbi,

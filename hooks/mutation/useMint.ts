@@ -1,7 +1,7 @@
 import { MockTokenABI } from "@/lib/abis/MockTokenABI";
 import { denormalize, valueToBigInt } from "@/lib/bignumber";
 import { DECIMALS_MOCK_TOKEN } from "@/lib/constants";
-import { useWagmiConfig } from "@/lib/wagmi";
+import { config } from "@/lib/wagmi";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useAccount } from "wagmi";
@@ -30,8 +30,6 @@ export const useMint = () => {
 
   const [txHash, setTxHash] = useState<HexAddress | null>(null);
 
-  const wagmiConfig = useWagmiConfig();
-
   const mutation = useMutation({
     mutationFn: async ({
       addressToken,
@@ -58,7 +56,7 @@ export const useMint = () => {
           })
         );
 
-        const txHash = await writeContract(wagmiConfig, {
+        const txHash = await writeContract(config, {
           address: addressToken,
           abi: MockTokenABI,
           functionName: "mint",
@@ -70,7 +68,7 @@ export const useMint = () => {
 
         setTxHash(txHash);
 
-        const result = await waitForTransactionReceipt(wagmiConfig, {
+        const result = await waitForTransactionReceipt(config, {
           hash: txHash,
         });
 

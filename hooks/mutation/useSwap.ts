@@ -1,7 +1,7 @@
 import { OPTIFinanceABI } from "@/lib/abis/OPTIFinanceABI";
 import { denormalize, valueToBigInt } from "@/lib/bignumber";
 import { ADDRESS_OPTIFINANCE } from "@/lib/constants";
-import { useWagmiConfig } from "@/lib/wagmi";
+import { config } from "@/lib/wagmi";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { erc20Abi } from "viem";
@@ -15,7 +15,6 @@ type Status = "idle" | "loading" | "success" | "error";
 
 export const useSwap = () => {
   const { address: userAddress } = useAccount();
-  const wagmiConfig = useWagmiConfig();
 
   const [steps, setSteps] = useState<
     Array<{
@@ -61,21 +60,21 @@ export const useSwap = () => {
           )
         );
 
-        await writeContract(wagmiConfig, {
+        await writeContract(config, {
           address: addressTokenIn,
           abi: erc20Abi,
           functionName: "approve",
           args: [ADDRESS_OPTIFINANCE, valueToBigInt(dAmount + 10)],
         });
 
-        // const approveHash = await writeContract(wagmiConfig, {
+        // const approveHash = await writeContract(config, {
         //   address: addressTokenIn,
         //   abi: erc20Abi,
         //   functionName: "approve",
         //   args: [ADDRESS_OPTIFINANCE, valueToBigInt(dAmount + 10)],
         // });
 
-        // const approveReceipt = await waitForTransactionReceipt(wagmiConfig, {
+        // const approveReceipt = await waitForTransactionReceipt(config, {
         //   hash: approveHash,
         // });
 
@@ -95,7 +94,7 @@ export const useSwap = () => {
           )
         );
 
-        const swapHash = await writeContract(wagmiConfig, {
+        const swapHash = await writeContract(config, {
           address: ADDRESS_OPTIFINANCE,
           abi: OPTIFinanceABI,
           functionName: "swap",
@@ -104,7 +103,7 @@ export const useSwap = () => {
 
         setTxHash(swapHash);
 
-        const swapReceipt = await waitForTransactionReceipt(wagmiConfig, {
+        const swapReceipt = await waitForTransactionReceipt(config, {
           hash: swapHash,
         });
 

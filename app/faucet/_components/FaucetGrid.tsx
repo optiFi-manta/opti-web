@@ -10,6 +10,7 @@ import { useStaking } from "@/hooks/query/useStaking";
 import { useMintAI } from "@/hooks/mutation/api/useMintAI";
 import ModalTransactionCustom from "@/components/modal/modal-transaction-custom";
 import { Loader2 } from "lucide-react";
+import { useMint } from "@/hooks/mutation/useMint";
 
 type Card = {
   id: number;
@@ -39,7 +40,7 @@ export function FaucetGrid() {
   const { mutation: mintMutationAI, result } = useMintAI();
   const [isModalTransactionOpen, setIsModalTransactionOpen] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { mutation: mintMutation, result: resultMint } = useMintAI();
+  const { mutation: mintMutation, txHash: resultMint } = useMint();
 
   const uniToken = sData?.find((item) => item.nameToken === "UNI");
   const daiToken = sData?.find((item) => item.nameToken === "DAI");
@@ -103,14 +104,16 @@ export function FaucetGrid() {
   };
 
   const handleMint = async () => {
-    mintMutation.mutate({
-      asset_id: findToken?.nameToken.toLowerCase() || '',
-      amount: "1000",
-    }, {
-      onSuccess: () => {
-        setIsOpen(true);
-      }
-    });
+    if (!mintMutation.isPending) {
+      mintMutation.mutate({
+        addressToken: findToken?.addressToken as HexAddress,
+        amount: "1000",
+      }, {
+        onSuccess: () => {
+          setIsOpen(true);
+        }
+      });
+    }
   }
 
   return (
@@ -164,20 +167,18 @@ export function FaucetGrid() {
                     >
                       {mintMutationAI.isPending ? <Loader2 className="animate-spin w-4 h-4" /> : `CLAIM 1000 $${findToken?.nameToken} to AI Wallet`}
                     </Button>
-                    <div className="sm:w-[50%]">
-                      <Button
-                        className={`flex-1 h-14 min-h-14 sm:w-[50%] ock-font-family text-sm ${selectedCard?.id === 2 ? "bg-pink-500" :
-                          selectedCard?.id === 3 ? "bg-purple-500" :
-                            selectedCard?.id === 4 ? "bg-purple-500" :
-                              selectedCard?.id === 5 ? "bg-green-500" :
-                                selectedCard?.id === 6 ? "bg-blue-500" : ""
-                          }`}
-                        onPress={handleMint}
-                        disabled={mintMutation.isPending}
-                      >
-                        {mintMutation.isPending ? <Loader2 className="animate-spin w-4 h-4" /> : `CLAIM 1000 $${findToken?.nameToken} to Main Wallet`}
-                      </Button>
-                    </div>
+                    <Button
+                      className={`flex-1 h-14 min-h-14 sm:w-[50%] ock-font-family text-sm ${selectedCard?.id === 2 ? "bg-pink-500" :
+                        selectedCard?.id === 3 ? "bg-purple-500" :
+                          selectedCard?.id === 4 ? "bg-purple-500" :
+                            selectedCard?.id === 5 ? "bg-green-500" :
+                              selectedCard?.id === 6 ? "bg-blue-500" : ""
+                        }`}
+                      onPress={handleMint}
+                      disabled={mintMutation.isPending}
+                    >
+                      {mintMutation.isPending ? <Loader2 className="animate-spin w-4 h-4" /> : `CLAIM 1000 $${findToken?.nameToken} to Main Wallet`}
+                    </Button>
 
                   </div>
                   <Button
@@ -205,7 +206,7 @@ export function FaucetGrid() {
         isOpen={isOpen}
         setIsOpen={closeModalMain}
         status={mintMutation.status || ""}
-        data={resultMint?.txhash || ""}
+        data={resultMint || ""}
         errorMessage={mintMutation.error?.message || undefined}
         name='mint'
       />

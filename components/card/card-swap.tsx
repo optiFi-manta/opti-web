@@ -3,7 +3,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import {
   ArrowDownUp,
-  ChevronDown
+  ChevronDown,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@heroui/button';
 import { Modal, ModalContent, ModalHeader, ModalBody } from '@heroui/modal';
@@ -208,12 +209,12 @@ const SwapCard: React.FC = () => {
           
           <Button
             onPress={handleSwap}
-            disabled={!validateSwap()}
+            disabled={!validateSwap() || mutation.isPending}
             className="w-full mt-4"
             color='primary'
             variant='solid'
           >
-            Swap
+            {mutation.isPending ? <Loader2 className="animate-spin w-4 h-4" /> : 'Swap'}
           </Button>
         </CardBody>
       </Card>

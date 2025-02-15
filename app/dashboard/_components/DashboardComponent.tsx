@@ -6,18 +6,17 @@ import ChartStaking from '@/components/chart/chart-staking';
 import CardPortfolio from '@/components/card/card-portfolio';
 import { useStaking } from '@/hooks/query/useStaking';
 import { readContract } from 'wagmi/actions';
-import { useWagmiConfig } from '@/lib/wagmi';
 import { MockStakingABI } from '@/lib/abis/MockStakingABI';
 import { useAddressAI } from '@/hooks/query/useAddressAI';
 import { normalize } from '@/lib/bignumber';
 import { DECIMALS_MOCK_TOKEN } from '@/lib/constants';
 import { Staking, StakingPositionList } from '@/types/staking';
+import { config } from '@/lib/wagmi';
 
 export default function DashboardComponent() {
   const { sData, sRefetch } = useStaking();
   const [isAIWallet, setIsAIWallet] = useState(false);
   const { addressAI } = useAddressAI();
-  const wagmiConfig = useWagmiConfig();
   const [combinedStakingData, setCombinedStakingData] = useState<StakingPositionList>([]);
 
   useEffect(() => {
@@ -26,7 +25,7 @@ export default function DashboardComponent() {
     const fetchStakingData = async () => {
       const results = await Promise.all(
         sData.map(async (pool: Staking) => {
-          const rawData = await readContract(wagmiConfig, {
+          const rawData = await readContract(config, {
             address: pool.addressStaking as HexAddress,
             abi: MockStakingABI,
             functionName: "stakes",
@@ -47,7 +46,7 @@ export default function DashboardComponent() {
     };
 
     fetchStakingData();
-  }, [sData, addressAI, wagmiConfig]);
+  }, [sData, addressAI]);
 
   return (
     <div className="flex flex-col gap-4 w-full max-w-7xl justify-center items-center">

@@ -1,5 +1,6 @@
 import { AVSAbi } from "@/lib/abis/AVSAbi";
-import { useWagmiConfig } from "@/lib/wagmi";
+import { ADDRESS_AVS } from "@/lib/constants";
+import { config } from "@/lib/wagmi";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useAccount } from "wagmi";
@@ -12,7 +13,6 @@ type Status = "idle" | "loading" | "success" | "error";
 
 export const useTaskAgent = () => {
   const { address: userAddress } = useAccount();
-  const wagmiConfig = useWagmiConfig();
 
   const [steps, setSteps] = useState<
     Array<{
@@ -30,7 +30,11 @@ export const useTaskAgent = () => {
   const [txHash, setTxHash] = useState<HexAddress | null>(null);
 
   const mutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({
+      idProtocol
+    }: {
+      idProtocol: string;
+    }) => {
       try {
         // Reset steps
         setSteps([{ step: 1, status: "idle" }]);
@@ -48,12 +52,12 @@ export const useTaskAgent = () => {
           })
         );
 
-        const txHash = await writeContract(wagmiConfig, {
-          address: "0x02B10904Ab1CF1c9FF638cc17710fBA306cC5ABF",
+        const txHash = await writeContract(config, {
+          address: ADDRESS_AVS,
           abi: AVSAbi,
           functionName: "taskAgent",
           args: [
-            "Uniswap_UNI"
+            idProtocol
           ],
         });
 
@@ -61,7 +65,7 @@ export const useTaskAgent = () => {
 
         console.log(txHash)
 
-        const result = await waitForTransactionReceipt(wagmiConfig, {
+        const result = await waitForTransactionReceipt(config, {
           hash: txHash,
         });
 
