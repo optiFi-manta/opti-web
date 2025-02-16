@@ -62,7 +62,7 @@ export default function Navbar() {
             <GithubIcon className="text-default-500" />
           </Link>
           <ThemeSwitch />
-          <div className="w-96">
+          <div className="flex w-auto">
             <WalletComponents />
           </div>
         </NavbarItem>
