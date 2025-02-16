@@ -57,6 +57,6 @@ export const siteConfig = {
   ],
   links: {
     github: "https://github.com/optiFi-manta",
-    docs: "https://kbaji.gitbook.io/opti-fi",
+    docs: "https://kbaji.gitbook.io/optifi-manta",
   },
 };
